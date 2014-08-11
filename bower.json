@@ -1,0 +1,8 @@
+{
+  "name": "ruby for c# programmers",
+  "dependencies": {
+    "bootstrap": "~3.2.0",
+    "angular": "~1.2.21",
+    "rainbow": "~1.1.9"
+  }
+}

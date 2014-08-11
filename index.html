@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Ruby for C# Programmers</title>
+
+    <link rel="stylesheet" href="public/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="public/components/rainbow/themes/github.css">
+    <link rel="stylesheet" href="public/css/app.css"/>
+
+    <script type="text/javascript" src="public/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="public/components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="public/components/rainbow/js/rainbow.js"></script>
+    <script type="text/javascript" src="public/components/rainbow/js/language/ruby.js"></script>
+    <script type="text/javascript" src="public/components/rainbow/js/language/csharp.js"></script>
+
+    <script type="text/javascript" src="public/components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="public/js/app.js"></script>
+</head>
+<body ng-app="tut">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2 toc">
+                <div class="panel panel-default" data-spy="affix">
+                <div class="panel-body">
+                    <ul class="nav">
+                        <li><a href="#intro">Intro</a></li>
+                        <li><a href="#structure">Structure</a></li>
+                        <li><a href="#data-types">Data Types</a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <div class="col-sm-10 scroll-content">
+                <h1 id="intro">Ruby for C# Programmers</h1>
+                <p>
+                    There are plenty of good books on the Ruby programming language. However many of the concepts required to
+                    program in Ruby are identical or have analogies in C#. If you already know c# then, lots of stuff doesn't
+                    need to be explained to you or could be quickly explained simply by saying this is Ruby's equivalent of
+                    Foo in c#/.NET or "these work just like in c# except a, b and c".
+                </p>
+                <p>
+                    This is mainly a <i>personal diary</i> for me while I'm learning Ruby, but there is some small chance that
+                    it might help other c# devs out there who are also jumping ship.
+                </p>
+
+                <h2 id="structure">Structure and Execution</h2>
+
+                <h3>Comments</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2">Feature</th>
+                            <th class="col-md-4">C#</th>
+                            <th class="col-md-6">Ruby</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Single line comment</td>
+                            <td><code-block lang="cs">//</code-block></td>
+                            <td><code-block lang="ruby">#</code-block></td>
+                        </tr>
+                        <tr>
+                            <td>Multi-line comment</td>
+                            <td>
+
+<code-block lang="csharp">
+/* I'm a c# multi
+   line comment */
+</code-block>
+                            </td>
+                            <td>
+<code-block lang="ruby">
+=begin I'm a ruby multi
+    line comment
+=end
+</code-block>
+
+                                Typically Ruby just prefixes multiple lines with <code>#</code>.
+                                The <code>=begin..=end</code> syntax is actually designed to be
+                                used for embedding documents but could technically be used for
+                                multi-line comments in the same way as <code>/*...*/</code> in c#.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Identifiers</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2">Feature</th>
+                        <th class="col-md-4">C#</th>
+                        <th class="col-md-6">Ruby</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Constants</td>
+                            <td><code-block lang="cs">const FOO_BAR = 5;</code-block></td>
+                            <td>
+                                <code-block lang="ruby">FooBar = 5</code-block>
+                                In ruby, identifiers starting with capital letters are implicitly constants.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Variables</td>
+                            <td><code-block lang="cs">var fooBar = 5;</code-block>
+                                C# identifiers can be prefixed with @ signs and can contain unicode escape sequences.
+                            </td>
+                            <td>
+                                <code-block lang="ruby">foo_bar = 5</code-block>
+                                The ruby convention is to separate multiple words with an underscore.
+                                <p>
+                                    C# identifiers can be prefixed with @ signs and can contain unicode escape sequences.
+                                    Ruby identifiers can contain actual unicode characters. Additionally, in ruby:
+                                <ul>
+                                    <li><code>$</code> prefixes <b>global variables</b></li>
+                                    <li><code>@</code> prefixes <b>instance variables</b></li>
+                                    <li><code>@@</code> prefixes <b>class variables</b></li>
+                                    <li><code>?</code> suffixes methods that <b>return a boolean</b></li>
+                                    <li><code>!</code> suffixes methods that alter their parameters (like <code>ref/out</code> parameters in c#)</li>
+                                </ul>
+                                For example:
+                                </p>
+<code-block lang="ruby">
+# A global variable
+@data           # An instance variable
+@@counter       # A class variable
+empty?          # A Boolean-valued method or predicate
+sort!           # In-place alternative to regular sort
+timeout=        # A method invoked by assignment
+</code-block>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Data</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2">Feature</th>
+                            <th class="col-md-4">C#</th>
+                            <th class="col-md-6">Ruby</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Data</td>
+                            <td>resource files</td>
+                            <td><code-block lang="ruby">__END__</code-block>
+                                When on a line by itself, this keyword marks the end of the program (and the beginning of a data section)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Whitespace</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2">Feature</th>
+                        <th class="col-md-4">C#</th>
+                        <th class="col-md-6">Ruby</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>statement terminator</td>
+                        <td><code-block lang="cs">;</code-block></td>
+                        <td><code-block lang="ruby">;</code-block>
+                            <p>
+                                Only required in ruby when more than one statement appears on a single line. If the
+                                code on a single line in ruby is syntactically complete then the new line is implicitly
+                                the statement terminator.
+                            </p>
+                            <p>
+                                Ruby program behave differently depending on where you insert a newline. For example, the
+                                following code adds x and y and assigns the sum to total:
+<code-block lang="ruby">
+    total = x +     # Incomplete expression, parsing continues
+    y
+</code-block>
+                                But this code assigns x to total, and then evaluates y, doing nothing with it:
+<code-block lang="ruby">
+    total = x  # This is a complete expression
+    + y      # A useless but complete expression
+</code-block>
+                            </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+
+                <h2 id="data-types">Data types</h2>
+                <h3>Strings</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2">Feature</th>
+                        <th class="col-md-4">C#</th>
+                        <th class="col-md-6">Ruby</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>String literal</td>
+                        <td><code-block lang="cs">"Hello"</code-block></td>
+                        <td><code-block lang="ruby">'World'</code-block></td>
+                    </tr>
+                    <tr>
+                        <td>Format string</td>
+                        <td>
+<code-block lang="cs">
+var target = "World";
+string.Format("Hello {0}!", target);
+</code-block>
+                        </td>
+                        <td>
+<code-block lang="ruby">
+target = 'World!'
+"Hello #{target}!"
+</code-block>
+                            Ruby's equivalent is called <i>interpolation</i> and is a language feature rather than a
+                            method. Unlike the string.Format method in c#, interpolated strings in ruby don't need any
+                            explicit arguments - any valid ruby expression can be used in a string interpolation.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <h3>Numbers</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2">Feature</th>
+                        <th class="col-md-4">C#</th>
+                        <th class="col-md-6">Ruby</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Integer literals</td>
+                        <td><code-block lang="cs">1000000000</code-block></td>
+                        <td>
+                            <code-block lang="ruby">1_000_000_000</code-block>
+                            Ruby allows underscores in integer literals, for readibility
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Bases</td>
+                        <td>
+<code-block lang="cs">
+0xFF
+Convert.ToInt32("0377", 8);
+Convert.ToInt32("11111111", 2);
+</code-block>
+                            c# doesn't natively support bases other than 10 and 16 - the Convert helper needs to be used for other bases
+                        </td>
+                        <td>
+<code-block lang="ruby">
+0xFF           # 255 in hexadecimal
+0377           # Octal
+0b1111_1111    # Binary
+</code-block>
+                            In ruby, an integer literal starting with a zero and consisting of more than one digit will be interpreted in
+                            some base other than 10.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

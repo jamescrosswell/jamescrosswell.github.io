@@ -1,0 +1,22 @@
+pre code .close {
+  border-collapse: inherit;
+  box-sizing: inherit;
+  float: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  opacity: inherit;
+  cursor: inherit;
+}
+pre code .close:hover {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: inherit;
+}
+.scroll-content,
+.toc {
+  margin-top: 20px;
+  overflow: auto;
+}
+#intro {
+  margin-top: 0px;
+}
