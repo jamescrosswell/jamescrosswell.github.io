@@ -23,3 +23,25 @@ pre code {
 #intro{
   margin-top: 0px;
 }
+
+code-block{
+  display: inline-block;
+  font-family: "Source Code Pro", Monaco, monospace;
+  overflow: auto;
+  padding: 10px;
+  margin-bottom: 10px;
+  white-space: pre;
+  width:100%;
+}
+
+code-block[lang="csharp"]{
+  float: left;
+  margin-right: 10px;
+  width:50%;
+  width: calc(~'50% - 10px');
+}
+
+code-block[lang="csharp"] + code-block[lang="ruby"] {
+  margin-left: 10px;
+  width:50%;
+}
