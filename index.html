@@ -44,6 +44,12 @@
                                 <li><a href="#ranges">Ranges</a></li>
                             </ul>
                         </li>
+                        <li>
+                            <a href="#methods">Methods</a>
+                            <ul>
+                                <li><a href="#parameters">Parameters</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 </div>
@@ -534,6 +540,177 @@
                     r.to_a                          # => ['a','b','c']: Enumerable defines to_a
                 </code-block>
 
+                <h2 id="methods">Methods</h2>
+                <h3 id="parameters">Parameters</h3>
+                <h4>Parameter Defaults</h4>
+                <code-block lang="csharp">
+                    string Prefix(string s, int len = 1)
+                    {
+                        return s.SubString(0,len);
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    def prefix(s, len=1)
+                        s[0,len]
+                    end
+                </code-block>
+
+                <p>
+                    In Ruby, argument defaults can be any arbitrary expressions, and can refer to instance variables or
+                    to previous parameters in the parameter list. For example:
+                </p>
+                <code-block lang="csharp">
+                    string Suffix(string s, int? len = null)
+                    {
+                        len = len ?? 1;
+                        return s.SubString(s.Length - len);
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    def suffix(s, index=s.size-1)
+                        s[index, s.size-index]
+                    end
+                </code-block>
+                <p>
+                    Doing this in c# is a bit messier... above it's done using a nullable parameter and setting the
+                    "default" value of that parameter in the method body, when it's null (i.e. the signature default).
+                    Another option would be to use method overloading. Either way is more verbose than the Ruby syntax.
+                </p>
+
+
+                <h4>Variable-Length Argument Lists</h4>
+                <code-block lang="csharp">
+                    int Max(int first, params int[] rest)
+                    {
+                        int max = first;
+                        foreach(var next in rest)
+                            if (next > max)
+                                max = next;
+                        return max;
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    def max(first, *rest)
+                        max = first
+                        rest.each {|x| max = x if x > max }
+                        max
+                    end
+                </code-block>
+                <p>
+                    Note that the c# code isn't generic like the Ruby code... this would be possible using c# generics and
+                    the <code>IComparable</code> interface but generics isn't what I'm trying to show in this example.
+                    Either way, the Ruby code is easier to read, write and use...
+                </p>
+
+                <h4>Passing arrays to methods with a variable number of arguments</h4>
+                <p>
+                    One major difference between the c# and ruby implementations is that arrays can be passed to the c#
+                    implementation as if the <code>params</code> keyword were not present. In Ruby, doing this would
+                    cause the array to be passed as the first (and only) "param" argument. In order to pass the
+                    individual elements of an array separately to a method that accepts a variable number of parameters
+                    in Ruby, you need to use the * (splat) operator:
+                </p>
+                <code-block lang="csharp">
+                    int[] rest = {2,3,4};
+                    var max = Max(1, rest); // max = 4
+                </code-block>
+                <code-block lang="ruby">
+                    rest = [2,3,4]
+                    _max = max(1,*rest)     # _max = 4
+                </code-block>
+
+                <h4>Named parameters (method invokation)</h4>
+                <p>
+                    Ruby doesn't have this so it has to be fudged using something like a hash array:
+                </p>
+                <code-block lang="csharp">
+                    int Area(int height, int width)
+                    {
+                        return height * width;
+                    }
+
+                    var area = Area(height: 4, width: 5);
+                </code-block>
+                <code-block lang="ruby">
+                    def area(args)
+                        height = args[:height]
+                        width = args[:width]
+                        height * width
+                    end
+
+                    _area = area({:height=>4, :width=>5})
+                </code-block>
+                <p>
+                    However, since this is a fairly common 'trick' if you have methods with lots of arguments, Ruby lets
+                    you omit the curly brackets and you can use the compact hash initialization syntax:
+                </p>
+                <code-block lang="ruby">
+                    _area = area(height:4, width:5)
+                </code-block>
+                <p>
+                    So calling the methods can look exactly like c#. However in the implementation of the method, Ruby
+                    has to "extract" the named methods from the argument list... and if you declare/implement a method
+                    like this in ruby then you <em>have</em> to call it with 'named arguments' - there's no way to just
+                    pass arguments (outside of a hash).
+                </p>
+
+                <h4>Lambda parameters</h4>
+                <code-block lang="csharp">
+                    void Enact(int count, Action<int> act)
+                    {
+                        for(i = 1; i <= count; i++)
+                            act(i);
+                    }
+
+                    Enact(5, x => Console.WriteLine(x));
+                </code-block>
+                <code-block lang="ruby">
+                    def enact(count)
+                        for element in 1..count
+                            yield element
+                        end
+                    end
+
+                    enact(5) {|x| puts x }
+                </code-block>
+                <p>
+                    In Ruby the <code>yield</code> keyword executes an implicit/hidden <strong>block</strong> parameter
+                    that is roughly equivalent to the c# Func delegates. If you want to be able to pass the block to
+                    a nested function, then the block parameter can be explicitly declared:
+                </p>
+                <code-block lang="csharp">
+                    void DoubleAct(int count, Action<int> act)
+                    {
+                        Enact(count, act);
+                        Enact(count, act);
+                    }
+
+                    DoubleAct(5, x => Console.WriteLine(x));
+                </code-block>
+                <code-block lang="ruby">
+                    def double_act(count, &act)
+                        enact(count, &act)
+                        enact(count, &act)
+                    end
+
+                    double_act(5) {|x| puts x }
+                </code-block>
+                <p>
+                    If you need to pass multiple <em>blocks</em> to a method in Ruby then it has to be done by passing
+                    <code>Proc</code> objects rather than blocks. You still kind of get lambda syntax when doing this
+                    but you have to wrap it in a Proc. C# is a bit more elegant in this particular case.
+                </p>
+
+                <code-block lang="ruby">
+                    def do_two_things(target, action_one, action_two)
+                        action_one.call(target)
+                        action_two.call(target)
+                    end
+
+                    one = Proc.new {|x| puts x }
+                    two = Proc.new {|x| puts x**2 }
+                    do_two_things(5, one, two)
+                </code-block>
             </div>
         </div>
     </div>

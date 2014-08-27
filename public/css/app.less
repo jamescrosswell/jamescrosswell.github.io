@@ -45,3 +45,28 @@ code-block[lang="csharp"] + code-block[lang="ruby"] {
   margin-left: 10px;
   width:50%;
 }
+
+code-block + p
+{
+  clear: left;
+}
+
+.toc {
+  ul.nav {
+    margin: -10px -10px 0 -10px;
+  }
+
+  ul.nav > li > a{
+    padding: 5px 15px 0 15px;
+  }
+
+  ul.nav > li > ul {
+    padding-left:30px;
+    padding-right:30px;
+    list-style: none;
+  }
+  ul.nav ul > li > a {
+
+    text-decoration: none;
+  }
+}
