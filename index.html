@@ -47,7 +47,11 @@
                         <li>
                             <a href="#methods">Methods</a>
                             <ul>
-                                <li><a href="#parameters">Parameters</a></li>
+                                <li><a href="#argument-defaults">Argument defaults</a></li>
+                                <li><a href="#argument-params">Argument params</a></li>
+                                <li><a href="#array-params">Array params</a></li>
+                                <li><a href="#named-parameters">Named parameters</a></li>
+                                <li><a href="#lambda-parameters">Lambda parameters</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -541,8 +545,7 @@
                 </code-block>
 
                 <h2 id="methods">Methods</h2>
-                <h3 id="parameters">Parameters</h3>
-                <h4>Parameter Defaults</h4>
+                <h3 id="argument-defaults">Argument defaults</h3>
                 <code-block lang="csharp">
                     string Prefix(string s, int len = 1)
                     {
@@ -578,7 +581,7 @@
                 </p>
 
 
-                <h4>Variable-Length Argument Lists</h4>
+                <h3 id="argument-params">Argument params</h3>
                 <code-block lang="csharp">
                     int Max(int first, params int[] rest)
                     {
@@ -598,11 +601,10 @@
                 </code-block>
                 <p>
                     Note that the c# code isn't generic like the Ruby code... this would be possible using c# generics and
-                    the <code>IComparable</code> interface but generics isn't what I'm trying to show in this example.
-                    Either way, the Ruby code is easier to read, write and use...
+                    the <code>IComparable</code> interface but generics.
                 </p>
 
-                <h4>Passing arrays to methods with a variable number of arguments</h4>
+                <h3 id="array-params">Array params</h3>
                 <p>
                     One major difference between the c# and ruby implementations is that arrays can be passed to the c#
                     implementation as if the <code>params</code> keyword were not present. In Ruby, doing this would
@@ -619,7 +621,7 @@
                     _max = max(1,*rest)     # _max = 4
                 </code-block>
 
-                <h4>Named parameters (method invokation)</h4>
+                <h3 id="named-parameters">Named parameters (method invokation)</h3>
                 <p>
                     Ruby doesn't have this so it has to be fudged using something like a hash array:
                 </p>
@@ -654,9 +656,9 @@
                     pass arguments (outside of a hash).
                 </p>
 
-                <h4>Lambda parameters</h4>
+                <h3 id="lambda-parameters">Lambda parameters</h3>
                 <code-block lang="csharp">
-                    void Enact(int count, Action<int> act)
+                    void Enact(int count, Action&lt;int&gt; act)
                     {
                         for(i = 1; i <= count; i++)
                             act(i);
@@ -679,7 +681,7 @@
                     a nested function, then the block parameter can be explicitly declared:
                 </p>
                 <code-block lang="csharp">
-                    void DoubleAct(int count, Action<int> act)
+                    void DoubleAct(int count, Action&lt;int&gt; act)
                     {
                         Enact(count, act);
                         Enact(count, act);
@@ -696,11 +698,9 @@
                     double_act(5) {|x| puts x }
                 </code-block>
                 <p>
-                    If you need to pass multiple <em>blocks</em> to a method in Ruby then it has to be done by passing
-                    <code>Proc</code> objects rather than blocks. You still kind of get lambda syntax when doing this
-                    but you have to wrap it in a Proc. C# is a bit more elegant in this particular case.
+                    If you need to pass multiple <em>blocks</em> to a method in Ruby, this can be done by passing
+                    <code>Proc</code> objects rather than blocks. You still kind of get lambda syntax when doing this:
                 </p>
-
                 <code-block lang="ruby">
                     def do_two_things(target, action_one, action_two)
                         action_one.call(target)
@@ -711,6 +711,53 @@
                     two = Proc.new {|x| puts x**2 }
                     do_two_things(5, one, two)
                 </code-block>
+
+                <p>
+                    Another option is lambdas like so:
+                </p>
+                <code-block lang="ruby">
+                    succ = ->(x){ x+1 }
+                    succ.call(2)    # => 3
+                </code-block>
+                <p>
+                    The result is something that much more closely matches the c# way of doing this and is just as
+                    concise:
+                </p>
+                <code-block lang="csharp">
+                    void DoTwoThings(int target, Action&lt;int&gt; actionOne, Action&lt;int&gt; actionTwo)
+                    {
+                        actionOne(target);
+                        actionTwo(target);
+                    }
+
+                    DoTwoThings(5, x => Console.WriteLine(x), x => Console.WriteLine(x*x));
+                </code-block>
+                <code-block lang="ruby">
+                    def do_two_things(target, action_one, action_two)
+                        action_one.call(target)
+                        action_two.call(target)
+                    end
+
+                    do_two_things(5, -> x { puts x }, -> x { puts x**2 })
+                </code-block>
+                <p>
+                    As with methods, lambdas can make some of their arguments optional by giving them default values and,
+                    as with block, local variables can be specified in the lambda declaration (to make sure the lambda
+                    doesn't inadvertedly overwrite variables outside of the block).
+                </p>
+                <code-block lang="ruby">
+                    # This lambda has an optional "factor" argument
+                    zoom = ->(x,y,factor=2) { [x*factor, y*factor] }
+
+                    # This lambda takes 2 args and declares 3 local vars
+                    f = ->(x,y; i,j,k) { ... }
+                </code-block>
+                <p>
+                    <span class="label label-warning">Warning</span> Procs and Lambdas in Ruby are not the same thing.
+                    Procs operate more like blocks (if a Proc/block includes a <code>return</code> statement this causes
+                    control to exit from the method that is calling the block. Lambdas are more like methods - a
+                    <code>return</code> statement in a lambda merely exits from the lambda itself.
+                </p>
             </div>
         </div>
     </div>
