@@ -22,7 +22,7 @@
 
             <div class="col-sm-2 toc">
                 <div class="panel panel-default" data-spy="affix">
-                <div class="panel-body">
+                <div id="main-nav" class="panel-body">
                     <ul class="nav">
                         <li><a href="#intro">Intro</a></li>
                         <li>
@@ -52,6 +52,12 @@
                                 <li><a href="#array-params">Array params</a></li>
                                 <li><a href="#named-parameters">Named parameters</a></li>
                                 <li><a href="#lambda-parameters">Lambda parameters</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#classes">Classes</a>
+                            <ul>
+                                <li><a href="#instance-variables">Instance variables</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -758,6 +764,101 @@
                     control to exit from the method that is calling the block. Lambdas are more like methods - a
                     <code>return</code> statement in a lambda merely exits from the lambda itself.
                 </p>
+
+                <h2>Classes</h2>
+                <h3 id="instance-variables">Instance Variables</h3>
+                <code-block lang="csharp">
+                    class Point
+                    {
+                        int x, y;
+
+                        public Point(int x, int y)
+                        {
+                            this.x = x;
+                            this.y = y;
+                        }
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    class Point
+                        def initialize(x,y)
+                            @x, @y = x, y
+                        end
+                    end
+                </code-block>
+                <p>
+                    Note that in Ruby, not only is it not required to declare instance variables on the class itself, it
+                    is also <strong>incorrect</strong>. Outside the scope of instance methods, the <code>self</code>
+                    keyword refers to the class itself, not the instance, so instance variables must be created and
+                    assigned in instance methods (like the constructor).
+                </p>
+
+                <h3 id="properties">Properties</h3>
+                <code-block lang="csharp">
+                    class Point
+                    {
+                        int x, y;
+
+                        public Point(int x, int y)
+                        {
+                            this.x = x;
+                            this.y = y;
+                        }
+
+                        public int X {
+                            get { return x; }
+                            set { x = value; }
+                        }
+                        public int Y {
+                            get { return y; }
+                            set { y = value; }
+                        }
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    class MutablePoint
+                        def initialize(x,y)
+                            @x, @y = x, y;
+                        end
+
+                        def x
+                            @x;
+                        end
+                        def x=(value)
+                            @x = value
+                        end
+                        def y
+                            @y;
+                        end
+                        def y=(value)        
+                            @y = value
+                        end
+                    end
+                </code-block>
+
+                <h3 id="auto-properties">Auto Properties</h3>
+                <code-block lang="csharp">
+                    class Point
+                    {
+                        public Point(int x, int y)
+                        {
+                            this.X = x;
+                            this.Y = y;
+                        }
+
+                        public int X { get; set; }
+                        public int Y { get; set; }
+                    }
+                </code-block>
+                <code-block lang="ruby">
+                    class MutablePoint
+                        def initialize(x,y)
+                            @x, @y = x, y;
+                        end
+
+                        attr_accessor :x, :y
+                    end
+                </code-block>
             </div>
         </div>
     </div>
