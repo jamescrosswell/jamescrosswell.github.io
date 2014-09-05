@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Python for C# Programmers</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/spacelab/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/dark.min.css">
+    <link rel="stylesheet" href="public/css/app.css"/>
+
+    <script type="text/javascript" src="public/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="public/components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script>
+
+    <script type="text/javascript" src="public/components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="public/js/app.js"></script>
+</head>
+<body ng-app="tut" ng-controller="IndexCtrl">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-2 toc">
+                <div class="panel panel-default" data-spy="affix">
+                <div id="main-nav" class="panel-body">
+                    <ul class="nav">
+                        <li><a href="#intro">Intro</a></li>
+                        <li><a href="#comments">Comments</a></li>
+                        <li><a href="#data-types">Data Types</a>
+                            <ul>
+                                <li><a href="#none">None</a></li>
+                                <li><a href="#strings">Strings</a></li>
+                                <li><a href="#lists">Lists</a></li>
+                                <li><a href="#tuples">Tuples</a></li>
+                                <li><a href="#sets">Sets</a></li>
+                                <li><a href="#dictionaries">Dictionaries</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#arithmetic">Arithmetic</a>
+                            <ul>
+                                <li><a href="#division">Division</a></li>
+                                <li><a href="#fractions">Fractions</a></li>
+                                <li><a href="#modulus">Modulus</a></li>
+                                <li><a href="#powers">Powers</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#casting">Casting</a></li>
+                        <li><a href="#functions">Functions</a></li>
+                        <li><a href="#comprehensions">Comprehensions</a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-sm-10 scroll-content" style="margin-bottom: 50%">
+
+                <h1 id="intro">Python for C# Programmers</h1>
+                <p>
+                    There are lots of great resources for learning Python, but few that are written from the perspective
+                    of a C# programmer. This is a little weblog/journal that I'm keeping while exploring Python, making
+                    note mainly of how Python differs from c# and explaning Python by way of comparison to C#...
+                </p>
+
+
+                <h2 id="comments">Comments</h2>
+
+                <h3>Single line comment</h3>
+                <code-block lang="csharp">//</code-block>
+                <code-block lang="python">#</code-block>
+
+
+                <h2 id="data-types">Data Types</h2>
+
+
+                <h3 id="none">None</h3>
+                <code-block lang="csharp">
+                    void IsItTrue(bool truth)
+                    {
+                        if (truth)
+                            Console.WriteLine("yes, it's true");
+                        else
+                            Console.WriteLine("no, it's false");
+                    }
+
+                    object a = null;
+                    IsItTrue(a != null);    // no, it's false
+                    IsItTrue(a == null);    // yes, it's true
+                </code-block>
+                <code-block lang="python">
+                    def is_it_true(anything):
+                        if anything:
+                            print("yes, it's true")
+                        else:
+                            print("no, it's false")
+
+                    a = None
+                    is_it_true(a)        # no, it's false
+                    is_it_true(not a)    # yes, it's true
+                </code-block>
+                <p>
+                    Note that c# doesn't have any way to implicitly treat values like booleans as Python does. In Python
+                    a value of <code>None</code> is implicitly <code>False</code> and so it can be used in boolean
+                    expressions (much as in javascript). Other data types in Python also have implicity boolean values,
+                    most of which are fairly intuitive (lists and sets etc. are <code>True</code> if they are not empty,
+                    for example).
+                </p>
+
+                <h3 id="strings">Strings</h3>
+                <p>
+                    In Python, tripple quotes get used for multi line strings. Everything in betwee the tripple quotes
+                    (including leading whitespace, other quotes and line breaks) gets included in the multi-line string
+                    literal. Mostly these are used in docstrings to document code.
+                </p>
+                <code-block lang="csharp">
+                    message =
+                        "This is a \r\n" +
+                        "multi-line string literal.";
+                </code-block>
+                <code-block lang="python">
+                    message =
+                        '''This is a
+                        multi-line string literal.'''
+                </code-block>
+
+                <h3 id="lists">Lists</h3>
+                <p>
+                    Lists in Python are kind of like arrays in C#... although the elements don't all have to be of the
+                    same type. Python also has some nice operators for dealing with lists, which C# lacks.
+                </p>
+                <code-block lang="python">
+                    a = [0, 1, 4, 9, 16]    # Array holds the squares of the indexes
+                    a[-2]                   # Returns the second to last item in the list
+                    b = a + [25,36]         # b is [0, 1, 4, 9, 16, 25, 36]
+                    c = b[4:5]              # c is [16] - this is called list slicing in Python
+                    c = b[4:-1]             # c is [16,25] - list slicing also accepts negative indices
+                    c = b[4:]               # c is [16,25,36] - or optional indices if you want to include all items
+                </code-block>
+
+                <h3 id="tuples">Tuples</h3>
+                <p>
+                    Tuples in Python don't really have any equivalent in C#. Technically, they are immutable lists.
+                    They are commonly used for as dictionary keys or in parallel initialization. They behave almost
+                    exactly like lists except that they get initialized using <code>(...)</code> instead of
+                    <code>[...]</code> and they don't have any methods such as <code>append</code>, <code>insert</code>,
+                    <code>pop</code>, <code>del</code> etc. that would let you modify them.
+                </p>
+                <code-block lang="python">
+                    a = (0, 1, 4, 9, 16)    # Tuple holds the squares of the indexes
+                    a[-2]                   # 9
+                </code-block>
+                <p>
+                    <span class="label label-info">Note</span> that if you want to create a tuple with only one item in
+                    it, you need to add an extra comma to the list. If you just surround a single value with brackets,
+                    Python assumes these are just extraneous brackets (a funny assumption but anyway)...
+                </p>
+                <code-block lang="python">
+                    type((False))       # &lt;type 'bool'&gt;
+                    type((False,))      # &lt;type 'tuple'&gt;
+                </code-block>
+
+                <h3 id="sets">Sets</h3>
+                <p>
+                    Another thing in Python that doesn't have any equivalent in C#. Sets can be created using the set
+                    constructor, using curly brackets, or by coercing lists.
+                </p>
+                <code-block lang="python">
+                    a_set = set()               # set()
+
+                    a_set = { 1, 4, 8 }         # { 1, 4, 8 }
+
+                    a_list = ['a', 'b', 'a']
+                    a_set = set(a_list)         # { 'a', 'b' }
+
+                    not_sure = {}               # Not a set!!!
+                    type(not_sure)              # &lt;type 'dict'&gt;
+                </code-block>
+                <p>
+                    <span class="label label-warning">Beware</span> of that last line... trying to create an empty set using
+                    curly bracket notation gives you a dictionary instead!
+                </p>
+                <p>
+                    Sets have lots of useful methods like lists (<code>in</code>, <code>add</code>, <code>update</code>,
+                    <code>pop</code>, <code>remove</code> etc.) and a bunch of set like methods as well:
+                </p>
+                <code-block lang="python">
+                    a_set = { 1, 4, 8 }
+                    b_set = { 2, 4, 6 }
+
+                    1 in a_set                          # True
+                    2 in a_set                          # False
+                    a_set.union(b_set)                  # {1, 2, 4, 6, 8}   : all elements from both sets
+                    a_set.intersection(b_set)           # {4}               : elements that are in both sets
+                    a_set.difference(b_set)             # {8, 1}            : elements that are only in a_set
+                    a_set.symmetric_difference(b_set)   # {8, 1, 2, 6}      : like an XOR
+
+                    a_set = {1, 2, 3}
+                    b_set = {1, 2, 3, 4}
+                    a_set.issubset(b_set)               # True
+                    b_set.issuperset(a_set)             # True
+                </code-block>
+
+                <h3 id="dictionaries">Dictionaries</h3>
+                <code-block lang="csharp">
+                    var numbers = new Dictionary&lt;string, int&gt;();
+                    numbers["one"] = 1;
+                    numbers["two"] = 2;
+                    numbers["three"] = 3;
+                    var sum = numbers["one"] + numbers["two"];  // 3
+                </code-block>
+                <code-block lang="python">
+                    numbers = dict()
+                    numbers["one"] = 1
+                    numbers["two"] = 2
+                    numbers["three"] = 3
+                    sum = numbers["one"] + numbers["two"]       # 3
+                </code-block>
+                <p>
+                    Alternative initialization syntax:
+                </p>
+                <code-block lang="python">
+                    numbers = { "one" : 1, "two" : 2, "three" : 3 }
+                </code-block>
+
+                <h2 id="arithmetic">Arithmentic</h2>
+
+                <h3 id="division">Division</h3>
+                <code-block lang="csharp">
+                    var result = Math.Floor(6.0 / 1.9);
+                </code-block>
+                <code-block lang="python">
+                    6.0 // 1.9      # 3
+                </code-block>
+                <p>
+                    Python has a speccial <code>//</code> operator that forces integer division. This may seem a bit
+                    backward, since typically the problem is the oposite (when doing something like <code>1/2</code>
+                    you end up with a result of 0 (since both the operands are integers and the integer result thus
+                    gets rounded down)... however Python also includes an instruction to force floating point division
+                    anywhere/everywhere where a <code>//</code> has not been used:
+                </p>
+                <code-block lang="python">
+                    from __future__ import division
+
+                    1 / 2           # 0.5
+                </code-block>
+                <p>
+                    <span class="label label-info">Note</span> that in Python 3 the / operator always performs integer
+                    division.
+                </p>
+
+                <h3 id="fractions">Fractions</h3>
+                <p>
+                    Python also has some built in classes to deal with fractions accurately...
+                </p>
+                <code-block lang="python">
+                    import fractions
+                    x = fractions.Fraction(1, 3)
+                    y = x * 2                       # y == Fraction(2, 3)
+                </code-block>
+
+
+                <h3 id="modulus">Modulus</h3>
+                <p>
+                    In c# the result of the modulus opeartor always has the same sign as the first operand. In Python it
+                    always has the same sign as the second operand.
+                </p>
+                <code-block lang="csharp">
+                    3 % -2          // 1
+                </code-block>
+                <code-block lang="python">
+                    3 % -2          # -1
+                </code-block>
+
+                <h3 id="powers">Powers</h3>
+                <code-block lang="csharp">
+                    Math.Pow(2, 3); // 8
+                </code-block>
+                <code-block lang="python">
+                    2**3            # 8
+                </code-block>
+
+                <h2 id="casting">Casting</h2>
+                <p>Called coercion in Python... but the same thing.</p>
+                <code-block lang="csharp">
+                    var result = (int)2.3;
+                </code-block>
+                <code-block lang="python">
+                    result = int(2.3)
+                </code-block>
+
+                <h2 id="functions">Functions</h2>
+
+                <code-block lang="csharp">
+                    /// &lt;summary&gt;Returns the first &lt;paramref name="length"/&gt; characters of the string s&lt;/summary&gt;
+                    /// &lt;param name="s"&gt;the string to extract a prefix from&lt;/param&gt;
+                    /// &lt;param name="len"&gt;the length of the prefix (1 by default)&lt;/param&gt;
+                    /// &lt;returns&gt;The first &lt;paramref name="length"/&gt; characters of s&lt;/returns&gt;
+                    string Prefix(string s, int len = 1)
+                    {
+                        return s.SubString(0,len);
+                    }
+                </code-block>
+                <code-block lang="python">
+                    def prefix(s, length=1):
+                        """Returns the first [length] characters of the string s
+
+                        :param s: the string to extract a prefix from
+                        :param length: the length of the prefix (1 by default)
+                        :return: The first [length] characters of s
+                        """
+                        return s[0:length]
+                </code-block>
+
+                <h3 id="named-parameters">Named parameters</h3>
+                <code-block lang="csharp">
+                    int Area(int height, int width)
+                    {
+                        return height * width;
+                    }
+
+                    var a = Area(height: 4, width: 5);
+                </code-block>
+                <code-block lang="python">
+                    def area(height, width):
+                        return height * width
+
+                    a = area(width=5, height=4)
+                </code-block>
+                <p>
+                    Python is a bit more flexible in that if you name the arguments it allows you to change the order
+                    in which you pass these.
+                </p>
+
+                <h2 ID="comprehensions">Comprehensions</h2>
+                <p>
+                    This is actually one area in which I think the C# solution (Linq) is superior to the Python one...
+                    I think the C# code below is much more readable than the Python equivalent.
+                </p>
+                <code-block lang="csharp">
+                    var a = new List&lt;int&gt; { 1, 2, 3, 4 };
+                    var b = a.Select (x => x * x);
+                    var c = a.Where(x => x % 2 == 0);
+                    var d = a.ToDictionary (x => x, y => y * y);
+                </code-block>
+                <code-block lang="python">
+                    a = [1, 2, 3, 4]
+                    b = [x * x for x in a]            # list comprehension
+                    c = [x for x in a if x % 2 == 0]
+                    d = {x:x*x for x in a}            # dictionary comprehension
+                </code-block>
+                <p>
+                    Python also has set comprehensions, which look similar to dictionary comprehensions (curly brackets
+                    are used) but they only select a single value:
+                </p>
+                <code-block lang="python">
+                    a = [1, 2, 3, 4, 3, 2, 1]
+                    s = set(a)                  # {1,2,3,4}
+                    t = {x**2 for x in s}       # {1,4,9,16}
+                    u = {x % 3 for x in a}      # {0, 1, 2} - set comprehensions can take any sequence as input
+                </code-block>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -38,7 +38,8 @@ code-block[lang="csharp"] {
   width: 50%;
   width: calc(50% - 10px);
 }
-code-block[lang="csharp"] + code-block[lang="ruby"] {
+code-block[lang="csharp"] + code-block[lang="ruby"],
+code-block[lang="csharp"] + code-block[lang="python"] {
   margin-left: 10px;
   width: 50%;
 }
