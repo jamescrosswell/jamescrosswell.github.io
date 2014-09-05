@@ -29,11 +29,11 @@
                         <li><a href="#data-types">Data Types</a>
                             <ul>
                                 <li><a href="#none">None</a></li>
-                                <li><a href="#strings">Strings</a></li>
                                 <li><a href="#lists">Lists</a></li>
                                 <li><a href="#tuples">Tuples</a></li>
                                 <li><a href="#sets">Sets</a></li>
                                 <li><a href="#dictionaries">Dictionaries</a></li>
+                                <li><a href="#strings">Strings</a></li>
                             </ul>
                         </li>
                         <li><a href="#arithmetic">Arithmetic</a>
@@ -47,6 +47,7 @@
                         <li><a href="#casting">Casting</a></li>
                         <li><a href="#functions">Functions</a></li>
                         <li><a href="#comprehensions">Comprehensions</a></li>
+                        <li><a href="#generators">Generators</a></li>
                     </ul>
                 </div>
                 </div>
@@ -104,23 +105,6 @@
                     most of which are fairly intuitive (lists and sets etc. are <code>True</code> if they are not empty,
                     for example).
                 </p>
-
-                <h3 id="strings">Strings</h3>
-                <p>
-                    In Python, tripple quotes get used for multi line strings. Everything in betwee the tripple quotes
-                    (including leading whitespace, other quotes and line breaks) gets included in the multi-line string
-                    literal. Mostly these are used in docstrings to document code.
-                </p>
-                <code-block lang="csharp">
-                    message =
-                        "This is a \r\n" +
-                        "multi-line string literal.";
-                </code-block>
-                <code-block lang="python">
-                    message =
-                        '''This is a
-                        multi-line string literal.'''
-                </code-block>
 
                 <h3 id="lists">Lists</h3>
                 <p>
@@ -219,6 +203,100 @@
                 </p>
                 <code-block lang="python">
                     numbers = { "one" : 1, "two" : 2, "three" : 3 }
+                </code-block>
+
+                <h3 id="strings">Strings</h3>
+                <h4>Multi-line strings</h4>
+                <p>
+                    In Python, tripple quotes get used for multi line strings. Everything in betwee the tripple quotes
+                    (including leading whitespace, other quotes and line breaks) gets included in the multi-line string
+                    literal. Mostly these are used in docstrings to document code.
+                </p>
+                <code-block lang="csharp">
+                    message =
+                        "This is a \r\n" +
+                        "multi-line string literal.";
+                </code-block>
+                <code-block lang="python">
+                    message =
+                        '''This is a
+                        multi-line string literal.'''
+                </code-block>
+
+                <h4>Format strings</h4>
+                <p>
+                    As with c-like languages, Python supports <a href="https://docs.python.org/3.1/library/string.html#format-specification-mini-language">format specifiers</a>.
+                </p>
+                <code-block lang="csharp">
+                    string.Format("{0}: {1:F1}", "Round me", 1.2345);
+                </code-block>
+                <code-block lang="python">
+                    "{0}: {1:.1f}".format("Round me", 1.2345)
+                </code-block>
+                <p>
+                    However it also supports something called <strong>compound field names</strong>... these let you
+                    use parameters to the format method in the format string using a Python like syntax. For example:
+                </p>
+                <code-block lang="python">
+                    words = ['hi', 'there']
+                    "{0[0]} {0[1]}".format(words)   # 'hi there'
+                </code-block>
+                <p>
+                    Here we're accessing the 0th argument to the format method just like a list (using a list indexer).
+                    This isn't something C# will do out of the box. You can also use compound field names in format
+                    strings to access dictionary items by key, access module variables and functions by name or to
+                    access properties and methods of class instances.
+
+                </p>
+
+                <h4>String manipulation</h4>
+                <p>
+                    Python lets you access strings in much the same way as you access lists:
+                </p>
+                <code-block lang="csharp">
+                    var s = "hello";
+                    s[s.Length - 2];
+                    s = s.Remove(s.Length - 1);
+                    s = s.Substring(0, s.Length - 1) + "p!";
+                </code-block>
+                <code-block lang="python">
+                    s = 'hello'
+                    s[-2]
+                    s = s[:-1]
+                    s = s[:-1] + "p!"
+                </code-block>
+
+                <h4>Regular expressions</h4>
+                <code-block lang="csharp">
+                    new Regex(@"[a-z]\d+");
+                </code-block>
+                <code-block lang="python">
+                    re.compile(r'[a-z]\d+')
+                </code-block>
+                <p>
+                    Python's equivalent of <code>@"\n"</code> in C# is <code>r"\n"</code>. Otherwise, the regular 
+                    expressions in Python look pretty similar to c# (the functionality that you find in the
+                    <code>Regex</code> class in C# can be found in the <code>re</code> module in Python).
+                </p>
+                <p>
+                    Python also has something called <a href="https://docs.python.org/2/howto/regex.html#using-re-verbose">verbose regular expressions</a>,
+                    which don't exist in C#. These allow the embedding of comments in multi-line string literals which
+                    get used for the regex pattern... which is a way of making the search patterns more readable.
+                </p>
+
+                <h3 id="bytes">Bytes</h3>
+                <p>
+                    Python also supports raw bytes rather than strings... byte literals look similar to string literals
+                    only they are prefixed by a <code>b</code>. As with strings, bytes are immutable so if you want to
+                    change a byte sequence, it has to be done using string slicing and concatenation operators (which
+                    work the same as strings), or you can convert the bytes object into a bytearray object.
+                </p>
+                <code-block lang="python">
+                    by = b'abcd\x65'    # b'abcde'
+                    type(by)            # &lt;type 'bytes'&gt;
+
+                    barr = bytearray(by)
+                    barr[0] = 102       # bytearray(b'fbcde')
                 </code-block>
 
                 <h2 id="arithmetic">Arithmentic</h2>
@@ -330,7 +408,7 @@
                     in which you pass these.
                 </p>
 
-                <h2 ID="comprehensions">Comprehensions</h2>
+                <h2 id="comprehensions">Comprehensions</h2>
                 <p>
                     This is actually one area in which I think the C# solution (Linq) is superior to the Python one...
                     I think the C# code below is much more readable than the Python equivalent.
@@ -356,6 +434,22 @@
                     s = set(a)                  # {1,2,3,4}
                     t = {x**2 for x in s}       # {1,4,9,16}
                     u = {x % 3 for x in a}      # {0, 1, 2} - set comprehensions can take any sequence as input
+                </code-block>
+
+                <h2 id="generators">Generators</h2>
+                <code-block lang="csharp">
+                    IEnumerable<int> Gime(){
+                        int i = 0;
+                        while(true)
+                            yield return i++;
+                    }
+                </code-block>
+                <code-block lang="python">
+                    def Gime():
+                        i = 0
+                        while True
+                            yield i
+                            i += i
                 </code-block>
 
             </div>
