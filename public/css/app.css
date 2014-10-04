@@ -38,8 +38,16 @@ code-block[lang="csharp"] {
   width: 50%;
   width: calc(50% - 10px);
 }
+
+code-block.full {
+    float: none;
+    margin-right: 0;
+    width: 100%;
+}
+
 code-block[lang="csharp"] + code-block[lang="ruby"],
-code-block[lang="csharp"] + code-block[lang="python"] {
+code-block[lang="csharp"] + code-block[lang="python"],
+code-block[lang="csharp"] + code-block[lang="scala"] {
   margin-left: 10px;
   width: 50%;
 }

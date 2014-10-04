@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Scala for C# Programmers</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/spacelab/bootstrap.min.css">
+    <link rel="stylesheet" href="public/components/highlight/styles/dark.css">
+    <link rel="stylesheet" href="public/css/app.css"/>
+
+    <script type="text/javascript" src="public/components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="public/components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="public/components/highlight/highlight.pack.js"></script>
+
+    <script type="text/javascript" src="public/components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="public/js/app.js"></script>
+</head>
+<body ng-app="tut" ng-controller="IndexCtrl">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-2 toc">
+                <div class="panel panel-default" data-spy="affix">
+                <div id="main-nav" class="panel-body">
+                    <ul class="nav">
+                        <li><a href="#intro">Intro</a></li>
+                        <li><a href="#identifiers">Identifiers</a>
+                            <ul>
+                                <li><a href="#methods">Methods</a></li>
+                                <li><a href="#operators">Operators</a></li>
+                                <li><a href="#literal-identifiers">Literal identifiers</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#data-types">Data Types</a>
+                            <ul>
+                                <li><a href="#none">None</a></li>
+                                <li><a href="#constants">Constants</a></li>
+                                <li><a href="#variables">Variables</a></li>
+                                <li><a href="#strings">Strings</a></li>
+                                <li><a href="#numbers">Numbers</a></li>
+                                <li><a href="#parameterized-types">Generics</a></li>
+                                <li><a href="#symbols">Symbols</a></li>
+                                <li><a href="#tuples">Tuples</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#classes-and-objects">Classes</a>
+                            <ul>
+                                <li><a href="#singletons">Singletons</a></li>
+                                <li><a href="#abstract">Abstract</a></li>
+                                <li><a href="#concrete">Concrete</a></li>
+                                <li><a href="#overloading">Overloading</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#comprehensions">Comprehensions</a></li>
+                        <li><a href="#control-flow">Flow</a>
+                            <ul>
+                                <li><a href="#if-statements">if</a></li>
+                                <li><a href="#switch">switch</a></li>
+                                <li><a href="#pattern-matching">Patterns</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-sm-10 scroll-content" style="margin-bottom: 50%">
+
+                <h1 id="intro">Scala for C# Programmers</h1>
+                <p>
+                    For the most part this is a web log of my experience learning Scala, from a C# background... and
+                    actually Scala isn't too different to C#. They're both static languages with bells and whistles like
+                    lambda functions. However Scala has some nice features that let you write quite compact code and it
+                    has the enormous advantage that it compiles down to the JVM (so can be deployed on platforms like
+                    Google App Engine and Heroku) and can use other java class libraries seamlessly.
+                </p>
+
+                <h2 id="identifiers">Identifiers</h2>
+                <p>
+                    Scala allows lots of crazy shit with identifiers. Most characters can validly be used in identifier
+                    names, with the exception of the “parenthetical” characters <code>( ) [ ] { }</code> and the
+                    “delimiter” characters <code>` ’ ' " . ; ,</code>.
+                </p>
+
+                <h3 id="methods">Method names</h3>
+                <p>
+                    <ol>
+                        <li>
+                            If a method takes no parameters, you can define it without parentheses and callers must then
+                            invoke that method without parentheses.
+                        </li>
+                        <li>
+                            If you add empty parentheses, then callers may optionally add parentheses.
+                        </li>
+                    </ol>
+                </p>
+                <p>
+                    <span class="label label-info">Note</span> The convention in the Scala community is to omit
+                    parentheses when calling a method that has no side effects. So, asking for the size of a sequence is
+                    fine without parentheses, but defining a method that transforms the elements in the sequence should
+                    be written with parentheses. This convention signals a potentially tricky method for users of your
+                    code.
+                </p>
+                <p>
+                    <ol start="3">
+                        <li>
+                            It’s also possible to omit the dot (period) when calling a parameterless method or one
+                            that takes only one argument.
+                        </li>
+                    </ol>
+                </p>
+                <p>
+                    This allows us to do stuff like the following:
+                </p>
+                <code-block lang="scala">
+                    def greet(person: String) {
+                        println("Hello " + person)
+                    }
+
+                    greet "Jim"
+                </code-block>
+
+                <h3 id="operators">Operators</h3>
+                <p>
+                    Scala has no operators, these are implemented as functions and take advantage of the fact that all
+                    the "operator characters" <code>! # % & * + - / : < = > ? @ \ ^ | ~</code> can be used as (or in)
+                    valid identifiers. The following are equivalent:
+                </p>
+                <code-block lang="scala">
+                    var x = 6 + 5
+                </code-block>
+                <code-block lang="scala">
+                    var x = 6 .+(5)
+                </code-block>
+                <p>
+                    <span class="label label-info">Note</span> that there is a space between the <code>6</code> and the
+                    <code>.+</code> in that second example, so as not to confuse the use of the dot with the declaration
+                    of a double.
+                </p>
+                <p>
+                    This leads to some additional rules around the use of operator characters in "plain" identifiers
+                    however. Underscore characters (<code>_</code>) have a special meaning in identifiers. Everything
+                    after an <code>_</code> up until the next whitespace is treated as part of the identifier. So
+                    <code>val xyz_++= = 1</code> assigns the value <code>1</code> to the variable <code>xyz_++=</code>.
+                    By contrast val <code>xyz++= = 1</code> won’t compile because the “identifier” could also be
+                    interpreted as <code>xyz ++=</code>, which looks like an attempt to append something to
+                    <code>xyz</code>.
+                </p>
+                <p>
+                    To prevent similar ambiguity, alphanumeric characters are not allowed after an underscore followed
+                    by one or more operator characters. Otherwise it would be hard to say whether <code>abc_=123</code>
+                    was an identifier or an attempt to assign the value <code>123</code> to the variable
+                    <code>abc_</code>.
+                </p>
+
+                <h3 id="literal-identifiers">Literal identifiers</h3>
+                <p>
+                    Another oddity of Scala is that it allows identifiers to be surrounded in back-quotes:
+                </p>
+                <code-block lang="scala">
+                    val `My way of saying hello` = "Hi!"
+                    println(`My way of saying hello`)
+                </code-block>
+                <p>
+                    From what I can tell, the main reason for this is that some of Scala's keywords are used as
+                    type or package names by various Java libraries. You can get around this in Scala by using the back
+                    quote form of the identifier in question - e.g.
+                </p>
+                <code-block lang="scala">
+                    java.net.Proxy.‵type‵
+                </code-block>
+
+                <h2 id="data-types">Data Types</h2>
+
+                <h3 id="none">None</h3>
+                <p>
+                    Scala discourages the use of null. Instead it uses <code>Some</code> and <code>None</code>, which
+                    are subclasses of the <code>Options</code> type. Scala has null only because it runs on the JVM
+                    and the .NET framework, so it has to have null to support those libraries.
+                </p>
+                <code-block lang="scala">
+                    object RunMe {
+
+                      def main(args: Array[String]) = {
+                        isOnTheMap("Alabama");
+                        isOnTheMap("Wonderland");
+                      }
+
+                      val theMap = Map(
+                        "Alabama" -> "Montgomery",
+                        "Alaska" -> "Juneau",
+                        "Wyoming" -> "Cheyenne")
+
+                      def isOnTheMap(place: String) = {
+                        val location = theMap.get(place)
+                        if (location.isDefined)
+                          println(place + " is in " + location.get)
+                        else
+                          println(place + " is nowhere to be found")
+                      }
+
+                    }
+                </code-block>
+                <pre>
+$ scala runme.scala
+Alabama is in Montgomery
+Wonderland is nowhere to be found
+                </pre>
+
+                <h3 id="constants">Constants</h3>
+                <code-block lang="csharp">
+                    const int x = 6;
+                </code-block>
+                <code-block lang="scala">
+                    val x = 6
+                </code-block>
+
+                <h3 id="variables">Implicitly typed variables</h3>
+                <code-block lang="csharp">
+                    var x = 6;
+                </code-block>
+                <code-block lang="scala">
+                    var x = 6
+                </code-block>
+
+
+                <h3 id="strings">Strings</h3>
+                <h4>Multi-line strings</h4>
+                <p>
+                    Scala lets you use triple quotes to define multi-line non-escaped strings (i.e. escape sequences
+                    like \t and \n won't be interpreted inside triple quoted string literals).
+                </p>
+                <code-block lang="csharp">
+                    message =
+                        "This is a \r\n" +
+                        "multi-line string literal.";
+                </code-block>
+                <code-block lang="scala">
+                    message =
+                        """This is a
+                        multi-line string literal."""
+                </code-block>
+
+                <h3 id="numbers">Numbers</h3>
+
+                <h4>Bases</h4>
+                <code-block lang="csharp">
+                    0xFF
+                    Convert.ToInt32("0377", 8);
+                </code-block>
+                <code-block lang="scala">
+                    0xFF            // 255 in hexadecimal
+                    0377            // Octal
+                </code-block>
+                <p>
+                    c# doesn't natively support bases other than 10 and 16. Scala natively supports octal as well.
+                </p>
+
+                <h3 id="parameterized-types">Parameterized Types</h3>
+                <p>
+                    Scala has <em>parameterized types</em> which are similar to C# generics except you declare them with
+                    square brackets instead of pointy ones (since greater than and less than can be used in function
+                    names in Scalar - whereas square brackets cannot).
+                </p>
+                <code-block lang="csharp">
+                    var languages = new List&lt;string&gt;();
+                </code-block>
+                <code-block lang="scala">
+                    var languages: List[String] = List()
+                </code-block>
+                <p>
+                    Scala also has some curious ways to declare abstract generic types that have no parallel in C#. In
+                    the Scala docs you'll note that the List class is declared as <code>class List[+A]</code>. The
+                    <code>+</code> bit indicates that <code>List[B]</code> is a <em>subtype</em> of <code>List[A]</code>
+                    for any <code>B</code> that is a subtype of <code>A</code>.
+                </p>
+                <p>
+                    If there is a <code>-</code> in front of a type parameter, then the relationship goes the other way;
+                    <code>Foo[B]</code> would be a <em>supertype</em> of <code>Foo[A]</code>, if the declaration was
+                    <code>Foo[-A]</code>. I can't imagine when you would need such an unusual construct.
+                </p>
+
+                <h3 id="abstract-types">Abstract Types</h3>
+                <p>
+                    Scala has another odd construct called an <em>abstract type</em>:
+                </p>
+                <code-block lang="scala">
+                    abstract class BulkReader {
+                        type In
+                        val source: In
+                        def read: String
+                    }
+
+                    class StringBulkReader(val source: String) extends BulkReader {
+                        type In = String
+                        def read = source
+                    }
+                </code-block>
+                <p>
+                    This could be rewritten using parameterized types as:
+                </p>
+                <code-block lang="scala">
+                    abstract class BulkReader[In] {
+                        val source: In
+                        def read: String
+                    }
+
+                    class StringBulkReader(val source: String) extends BulkReader[String] {
+                        def read = source
+                    }
+                </code-block>
+
+                <h3 id="symbols">Symbols</h3>
+                <p>
+                    In Scala you can write a single quote followed by a letter and then any series of alphanumeric
+                    characters to create a symbol (like Ruby symbols), typically used for map keys.
+                </p>
+                <code-block lang="scala">
+                    'id         // shorthand for scala.Symbol("id")
+                </code-block>
+
+                <h3 id="tuples">Tuples</h3>
+                <p>
+                    Scala has tuples like Ruby and Python.
+                </p>
+                <code-block lang="scala">
+                    val (x,y,z) = (1,2,3)   // Defines three variables: x, y and z and assigns them to 1, 2 and 3
+                    val t = (x,y,z)         // Sets the variable `t` to be a tuple
+                    val a = t._2            // Sets a to the second item in the tuple `t` (one based, not zero based)
+                </code-block>
+
+
+                <h2 id="classes-and-objects">Classes & Objects</h2>
+
+
+                <h3 id="singletons">Singletons</h3>
+                <code-block lang="csharp">
+                    static class UpperClass {
+                        public static IOrderedEnumerable&lt;string&gt; Upper(params string[] args) {
+                            return args.Select (x => x.ToUpper ());
+                        }
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    object Upper {
+                        def upper(strings: String*) = strings.map(_.toUpperCase())
+                    }
+                </code-block>
+                <p>Scala has no static members. Instead it has two keywords for creating objects: <code>class</code>
+                    and <code>object</code>. The first is pretty much like a C# class (you have class declarations and
+                    then you use the new operator to create instances of the class) and the second is a `singleton` - so
+                    you can't use the new operator with it and you access members more or less like you would with a
+                    static class in C#.
+                </p>
+                <p>
+                    Also note about the Scala code that curly brackets to delimit the body of methods are optional, as
+                    is the return type (which is determined implicitly) and so are statement terminators and even the
+                    return keyword (by default the last line in a method is evaluated to determine the return value)...
+                    which explains why the Scala code is so much more compact.
+                </p>
+
+                <h3 id="abstract">Abstract classes</h3>
+                <code-block lang="csharp">
+                    abstract class Shape {
+                        public abstract void Draw();
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    abstract class Shape() {
+                        def draw(): Unit
+                    }
+                </code-block>
+                <p>
+                    <span class="label label-info">Note</span> Scala has no <code>virtual</code> keyword... all methods
+                    in Scala can be overridden by descendants. Also note that there is no <code>abstract</code> keyword
+                    before the <code>draw()</code> method in the Scala code... the method is implicitly abstract by
+                    virtue of the fact that it has no method body.
+                </p>
+
+                <h3 id="concrete">Concrete classes</h3>
+                <code-block lang="csharp">
+                    class Point{
+                        public readonly double X, Y;
+                        public Point (double x, double y)
+                        {
+                            this.X = x;
+                            this.Y = y;
+                        }
+
+                        public override string ToString ()
+                        {
+                            return "Point(" + X + "," + Y + ")";
+                        }
+                    }
+
+                    public class Circle: Shape {
+                        public readonly Point Center;
+                        public readonly double Radius;
+
+                        public Circle (Point center, double radius)
+                        {
+                            this.Center = center;
+                            this.Radius = radius;
+                        }
+
+                        public override void Draw ()
+                        {
+                            Console.WriteLine ("Circle.draw: " + this.ToString ());
+                        }
+
+                        public override string ToString ()
+                        {
+                            return "Circle(" + Center + "," + Radius + ")";
+                        }
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    class Point(val x: Double, val y: Double) {
+                        override def toString() = "Point(" + x + "," + y + ")"
+                    }
+
+                    class Circle(val center: Point, val radius: Double) extends Shape {
+                        def draw() = println("Circle.draw: " + this)
+                        override def toString() = "Circle(" + center + "," + radius + ")"
+                    }
+                </code-block>
+                <p>
+                    You can see the constructor arguments after the class  name in Scala... and anything you put here is
+                    automatically configured as a member variable - obviating the need for tonnes of boilerplate that is
+                    the bulk of the C# code.
+                </p>
+                <p>
+                    <code>override</code> works pretty much the same in Scala... although you don't need to `override`
+                    methods of abstract base classes (that's implicit). So in the circle class, we just define the
+                    <code>draw</code> method, whereas we override the <code>toString()</code> method.
+                </p>
+
+                <h3 id="overloading">Method Overloading</h3>
+                <code-block lang="csharp">
+                    static class Greeter
+                    {
+                        public static string Greet(string who)
+                        {
+                            return "Hello " + who;
+                        }
+
+                        public static string Greet()
+                        {
+                            return Greet("world");
+                        }
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    object Greeter {
+                        def greet(who: String): String = "Hello " + who
+                        def greet(): String = greet("world")
+                    }
+                </code-block>
+                <p>
+                    This is a bit contrived - in both C# and Scala you would probably use a default for the who
+                    parameter rather than overloading the method in this simple example... but it shows the difference
+                    between method overloading in the two languages. Scala's approach reinforces Scala's functional
+                    heritage.
+                </p>
+
+                <h2 id="comprehensions">Comprehensions</h2>
+                <p>
+                    Comprehensions in Scala are used to achieve what you'd generally achieve with Linq in C#.
+                </p>
+                <code-block lang="csharp">
+                    var a = new List&lt;int&gt; { 1, 2, 3, 4 };
+                    var b = a.Select (x => x * x);
+                    var c = a.Where(x => x % 2 == 0);
+                    var d = a.ToDictionary (x => x, y => y * y);
+                </code-block>
+                <code-block lang="scala">
+                    val a = List(1, 2, 3, 4)
+                    val b = for (x <- a) yield x * x
+                    val c = for (x <- a if x % 2 == 0) yield x
+                    val d = a map (x => x -> x*x) toMap
+                </code-block>
+
+
+                <h2 id="control-flow">Flow</h2>
+                <h3 id="if-statements">if statements</h3>
+                <p>
+                    If statements in Scala are also expressions, so they can be used instead of ternary operators:
+                </p>
+                <code-block lang="csharp">
+                    var a = x ? "hello" : "goodbye";
+                </code-block>
+                <code-block lang="scala">
+                    val a = if (x) "hello" else "goodbye"
+                </code-block>
+
+                <h3 id="switch">Switch</h3>
+                <code-block lang="csharp">
+                    var bools = new bool[] { true, false };
+                    foreach (var x in bools)
+                        switch (x)
+                        {
+                            case true:
+                                Console.WriteLine ("heads");
+                                break;
+                            case false:
+                                Console.WriteLine ("tails");
+                                break;
+                            default:
+                                Console.WriteLine ("something other than heads or tails (yikes!)");
+                                break;
+                        }
+                </code-block>
+                <code-block lang="scala">
+                    val bools = List(true, false)
+                    for (bool <- bools) {
+                        bool match {
+                            case true => println("heads")
+                            case false => println("tails")
+                            case _ => println("something other than heads or tails (yikes!)")
+                        }
+                    }
+                </code-block>
+
+                <h3 id="pattern-matching">Patterns</h3>
+                <p>
+                    Although at first glance (above) Scala's <code>match</code> statement looks comparable to the C#
+                    <code>case</code> statement, the Scala one allows way more sophisticated pattern matching so you can
+                    match on types, wildcards, sequences, regular expressions, object variable inspection.
+                </p>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
