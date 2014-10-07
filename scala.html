@@ -51,6 +51,7 @@
                                 <li><a href="#abstract">Abstract</a></li>
                                 <li><a href="#concrete">Concrete</a></li>
                                 <li><a href="#overloading">Overloading</a></li>
+                                <li><a href="#traits">Traits</a></li>
                             </ul>
                         </li>
                         <li><a href="#comprehensions">Comprehensions</a></li>
@@ -370,7 +371,51 @@ Wonderland is nowhere to be found
 
 
                 <h2 id="classes-and-objects">Classes & Objects</h2>
+                <p>
+                    Scala classes consist of <em>primary constructors</em> and <em>auxiliary constructors</em>. The
+                    primary constructor is the entire body of the class. Any parameters that the constructor requires
+                    are listed after the class name.
+                </p>
+                <code-block lang="csharp">
+                    class Greeter{
+                        public string Name { get; set; }
 
+                        public Greeter (string name) {
+                            if (name == null || name.IsEmpty())
+                                throw new ArgumentException("You gotta say hi to someone!");
+                            this.Name = name;
+                        }
+
+                        public Greeter () : this("world") {
+                            Console.WriteLine("Warning: you're addressing the room!");
+                        }
+
+                        public void Greet() {
+                            Console.WriteLine(string.Format ("Hello {0}", Name));
+                        }
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    class Greeter(name: String) {
+                        // This is the constructor code in Scala
+                        require(name != null && !name.isEmpty, "You gotta say hi to someone!")
+
+                        // This is an auxiliary constructor
+                        def this() = {
+                            this("world")
+                            println("Warning: you're addressing the room!")
+                        }
+
+                        // Note that a variable called name is automatically available to us
+                        // since it was a parameter to the primary constructor
+                        def Greet() = { println("Hello %s".format(name)) }
+                    }
+                </code-block>
+                <p>
+                    <span class="label label-info">Note</span>  that scala automatically sets up internal fields and
+                    public accessor methods for parameters to the constructor. You can "override" this behaviour by
+                    preceding constructor parameters with the <code>private</code> keyword.
+                </p>
 
                 <h3 id="singletons">Singletons</h3>
                 <code-block lang="csharp">
@@ -501,6 +546,74 @@ Wonderland is nowhere to be found
                     between method overloading in the two languages. Scala's approach reinforces Scala's functional
                     heritage.
                 </p>
+
+                <h3 id="traits">Traits</h3>
+                <p>
+                    In their most basic form, traits that merely include abstract members are the equivalent of C#
+                    interfaces:
+                </p>
+                <code-block lang="csharp">
+                    interface ISubject {
+                        Action&lt;object&gt; Observer;
+                        void AddObserver(Observer observer);
+                        void NotifyObservers();
+                    }
+
+                    class ConcreteSubject : ISubject {
+                        ...         // Implementation
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    trait Subject {
+                        type Observer = { def receiveUpdate(subject: Any) }
+                        def addObserver(observer:Observer)
+                        def notifyObservers()
+                    }
+
+
+                    class ConcreteSubject extends Subject {
+                        ...         // Implementation
+                    }
+                </code-block>
+                <p>
+                    However Scala traits can also provide concrete implementations themselves, so they're more like Ruby
+                    mixins than they are C# or Java interfaces.
+                </p>
+                <code-block lang="scala">
+                    trait Subject {
+                        type Observer = { def receiveUpdate(subject: Any) }
+
+                        private var observers = List[Observer]()
+                        def addObserver(observer:Observer) = observers ::= observer
+                        def notifyObservers = observers foreach (_.receiveUpdate(this))
+                    }
+
+                    class Button(name: String){
+                      def click() = {}
+                    }
+
+                    class ObservableButton(name: String) extends Button(name) with Subject {
+                        override def click() = {
+                            super.click()
+                            notifyObservers
+                        }
+                    }
+                </code-block>
+                <p>
+                    The above demonstrates an <code>ObservableButton</code> class that mixes in our <code>Subject</code>
+                    trait using the <code>with</code> keyword. If you only need to use the trait once though, you can
+                    instead create an anonymous class that mixes in the trait and defines supporting functionality
+                    inline when declaring a variable:
+                </p>
+                <code-block lang="scala">
+                    val observableButton = new Button("Okay") with Subject {
+                        override def click() = {
+                            super.click()
+                            notifyObservers
+                        }
+                    }
+                </code-block>
+
 
                 <h2 id="comprehensions">Comprehensions</h2>
                 <p>
