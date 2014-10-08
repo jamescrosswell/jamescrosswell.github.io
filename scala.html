@@ -43,18 +43,10 @@
                                 <li><a href="#parameterized-types">Generics</a></li>
                                 <li><a href="#symbols">Symbols</a></li>
                                 <li><a href="#tuples">Tuples</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#classes-and-objects">Classes</a>
-                            <ul>
-                                <li><a href="#singletons">Singletons</a></li>
-                                <li><a href="#abstract">Abstract</a></li>
-                                <li><a href="#concrete">Concrete</a></li>
-                                <li><a href="#overloading">Overloading</a></li>
+                                <li><a href="#classes-and-objects">Classes</a></li>
                                 <li><a href="#traits">Traits</a></li>
                             </ul>
                         </li>
-                        <li><a href="#comprehensions">Comprehensions</a></li>
                         <li><a href="#control-flow">Flow</a>
                             <ul>
                                 <li><a href="#if-statements">if</a></li>
@@ -62,6 +54,7 @@
                                 <li><a href="#pattern-matching">Patterns</a></li>
                             </ul>
                         </li>
+                        <li><a href="#comprehensions">Comprehensions</a></li>
                     </ul>
                 </div>
                 </div>
@@ -85,7 +78,7 @@
                     <code>( ) [ ] { }</code> and the “delimiter” characters <code>` ’ ' " . ; ,</code>.
                 </p>
 
-                <h3 id="methods">Method names</h3>
+                <h3 id="methods">Methods</h3>
                 <p>
                     <ol>
                         <li>
@@ -121,6 +114,21 @@
                     }
 
                     greet "Jim"
+                </code-block>
+
+                <h4>Params</h4>
+                <p>
+                    You can define functions in Scala that accept a variable number of parameters:
+                </p>
+                <code-block lang="csharp">
+                    void ListNames(params string[] people){
+                        people.ToList().ForEach(x => Console.WriteLine(x));
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    def listNames(people: String*){
+                      people.toList.map(println(_))
+                    }
                 </code-block>
 
                 <h3 id="operators">Operators</h3>
@@ -242,6 +250,25 @@ Wonderland is nowhere to be found
                     message =
                         """This is a
                         multi-line string literal."""
+                </code-block>
+
+                <h4>Interpolation</h4>
+                <p>
+                    Scala has two prefixes that can be used with strings to enable interpolation and formatted
+                    interpolation. Basic interpolation can be done by using the <code>s</code> prefix:
+                </p>
+                <code-block lang="scala">
+                    val name = "Jim"
+                    println(s"Hello $name, did you know that 1 + 1 = ${1 + 1}?")
+                </code-block>
+                <p>
+                    Formatted interpolation can be done using the <code>f</code> prefix and allows formatting of the
+                    injected expressions as you might using a printf statement in C:
+                </p>
+                <code-block lang="scala">
+                    val height = 1.9d
+                    val name = "James"
+                    println(f"$name%s is $height%2.2f meters tall")  // James is 1.90 meters tall
                 </code-block>
 
                 <h4>Regular expressions</h4>
@@ -370,7 +397,7 @@ Wonderland is nowhere to be found
                 </code-block>
 
 
-                <h2 id="classes-and-objects">Classes & Objects</h2>
+                <h3 id="classes-and-objects">Classes & Objects</h3>
                 <p>
                     Scala classes consist of <em>primary constructors</em> and <em>auxiliary constructors</em>. The
                     primary constructor is the entire body of the class. Any parameters that the constructor requires
@@ -417,7 +444,36 @@ Wonderland is nowhere to be found
                     preceding constructor parameters with the <code>private</code> keyword.
                 </p>
 
-                <h3 id="singletons">Singletons</h3>
+                <h4 id="member-scope">Member Scope</h4>
+                <p>
+                    Scala has <code>public</code> (the default) <code>private</code> and <code>protected</code> class
+                    members, just as with C# and Java and you can use something called <code>scoped private</code>
+                    visibility to achieve the same things as the C# <code>internal</code> keyword. However Scala's
+                    scoped visibility is much more flexible than C#.
+                </p>
+                <p>
+                    In C# the <code>internal</code> keyword essentially limits a type or member to only be visible to
+                    code within the same namespace. In as much as C# namespaces are roughly equivalent to Scala packages
+                    then, the same can be achieved by using Scala's scoped private visibility specifiers:
+                </p>
+                <code-block lang="scala">
+                    package scopeA {
+                        class Class1 {
+                            private[scopeA] val field_thats_visible_in_the_scopeA_package
+                        }
+                    }
+                </code-block>
+                <p>
+                    However you can also specify <code>private[this]</code> on a class member to say that the member
+                    is only visible to the same instance of the class (so code from the same class but a different
+                    instance wouldn't be able to access the member).
+                </p>
+                <p>
+                    And <code>private[SomeClass]</code> would limit the visibility of a type or member to code within a
+                    specific class.
+                </p>
+
+                <h4 id="singletons">Singletons</h4>
                 <code-block lang="csharp">
                     static class UpperClass {
                         public static IOrderedEnumerable&lt;string&gt; Upper(params string[] args) {
@@ -443,7 +499,7 @@ Wonderland is nowhere to be found
                     which explains why the Scala code is so much more compact.
                 </p>
 
-                <h3 id="abstract">Abstract classes</h3>
+                <h4 id="abstract">Abstract classes</h4>
                 <code-block lang="csharp">
                     abstract class Shape {
                         public abstract void Draw();
@@ -461,7 +517,7 @@ Wonderland is nowhere to be found
                     virtue of the fact that it has no method body.
                 </p>
 
-                <h3 id="concrete">Concrete classes</h3>
+                <h4 id="concrete">Concrete classes</h4>
                 <code-block lang="csharp">
                     class Point{
                         public readonly double X, Y;
@@ -519,7 +575,7 @@ Wonderland is nowhere to be found
                     <code>draw</code> method, whereas we override the <code>toString()</code> method.
                 </p>
 
-                <h3 id="overloading">Method Overloading</h3>
+                <h4 id="overloading">Method Overloading</h4>
                 <code-block lang="csharp">
                     static class Greeter
                     {
@@ -612,24 +668,6 @@ Wonderland is nowhere to be found
                             notifyObservers
                         }
                     }
-                </code-block>
-
-
-                <h2 id="comprehensions">Comprehensions</h2>
-                <p>
-                    Comprehensions in Scala are used to achieve what you'd generally achieve with Linq in C#.
-                </p>
-                <code-block lang="csharp">
-                    var a = new List&lt;int&gt; { 1, 2, 3, 4 };
-                    var b = a.Select (x => x * x);
-                    var c = a.Where(x => x % 2 == 0);
-                    var d = a.ToDictionary (x => x, y => y * y);
-                </code-block>
-                <code-block lang="scala">
-                    val a = List(1, 2, 3, 4)
-                    val b = for (x <- a) yield x * x
-                    val c = for (x <- a if x % 2 == 0) yield x
-                    val d = a map (x => x -> x*x) toMap
                 </code-block>
 
 
@@ -764,6 +802,68 @@ Wonderland is nowhere to be found
                         case (p @ Person(_, _, _)) => println("%s is underpaid.\n".format(p.name))
                       }
                     }
+                </code-block>
+
+                <h4>Companion objects and extractors</h4>
+                <p>
+                    The magic behind pattern matching is implemented using the <code>apply</code> and
+                    <code>unapply</code> methods of what are known as <em>companion objects</em> in Scala. The basic
+                    gist of it is this:
+                </p>
+                <code-block lang="scala">
+                    class Point(val x: Int, val y: Int) {
+                    }
+
+                    object Point {
+                      def apply(x: Int, y: Int) = new Point(x, y)
+
+                      def unapply(point: Point) = {
+                        Some(point.x, point.y)
+                      }
+                    }
+
+                    val a = Point(3,4)      // Invokes the apply function (note the lack of the `new` keyword)
+                    val Point(x, y) = a     // Invokes the extractor function `unapply`
+                    println(s"x is $x")
+                    println(s"y is $y")
+                </code-block>
+                <p>
+                    Scala lets you define companion objects to classes simply by defining objects with the same name.
+                    These objects automatically have access to all the private fields etc. in the class. By convention
+                    you can define apply and unapply methods of the object which the Scala compiler lets you invoke by
+                    simply typing the name of the companion class followed by zero or more arguments to the apply or
+                    unapply methods encosed in parenthesis - it looks a bit like a constructor without the
+                    <code>new</code> keyword... which is exactly what we see in our pattern matching statements. The
+                    <code>apply</code> method is typically used as a factory method (although collection classes don't
+                    follow this convention). The <code>unapply</code> method, on the other hand, is used to do the
+                    opposite - to <em>extract</em> the parameters that defined or define the object and return these in
+                    a tuple (that we might use in pattern matching).
+                </p>
+                <p>
+                    This is important if you want to do pattern matching on your own custom classes... however in the
+                    pattern matching examples above you'll note that we didn't define any companion objects! This is
+                    because Scala also includes a <code>case</code> keyword that you can use to create <code>case
+                    classes</code>. These classes come with various bells and whistles out of the box, including a
+                    companion object that implements apply and unapply (automatically matching on the same parameters
+                    that get passed to the primary constructor).
+                </p>
+
+
+                <h2 id="comprehensions">Comprehensions</h2>
+                <p>
+                    Comprehensions in Scala are used to achieve what you'd generally achieve with Linq in C#.
+                </p>
+                <code-block lang="csharp">
+                    var a = new List&lt;int&gt; { 1, 2, 3, 4 };
+                    var b = a.Select (x => x * x);
+                    var c = a.Where(x => x % 2 == 0);
+                    var d = a.ToDictionary (x => x, y => y * y);
+                </code-block>
+                <code-block lang="scala">
+                    val a = List(1, 2, 3, 4)
+                    val b = for (x <- a) yield x * x
+                    val c = for (x <- a if x % 2 == 0) yield x
+                    val d = a map (x => x -> x*x) toMap
                 </code-block>
 
             </div>
