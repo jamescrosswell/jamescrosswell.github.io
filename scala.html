@@ -164,6 +164,33 @@
                     <code>abc_</code>.
                 </p>
 
+                <h4>Equals, eq and ne</h4>
+                <p>
+                    <span class="label label-warning">Warning!</span>
+                    Unlike C# the <code>==</code> operator in Scala tests for value equality (not reference equality)!
+                    It is an alias for the <code>Any.equals</code> method and is final, so cannot be overriden. If you
+                    want to test whether two variables point to the same object in Scala (i.e. reference equality) then
+                    you need to use the <code>eq</code> operator or it's inverse (the <code>ne</code> operator).
+                </p>
+                <code-block lang="csharp">
+                    return x == y || y != z;
+                </code-block>
+                <code-block lang="scala">
+                    return x eq y || y ne z
+                </code-block>
+                <p>
+                    <span class="label label-warning">Double warning!</span> The only exception to this rule is when
+                    testing for Array equality.
+                </p>
+                <code-block lang="scala">
+                    scala> Array(1, 2) == Array(1, 2)
+                    res0: Boolean = false
+                </code-block>
+                <p>
+                    When dealing with arrays, use the <code>sameElements</code> method instead of the <code>==</code>
+                    operator.
+                </p>
+
                 <h3 id="literal-identifiers">Literal identifiers</h3>
                 <p>
                     Another oddity of Scala is that it allows identifiers to be surrounded in back-quotes:
