@@ -21,17 +21,13 @@
         <div class="row">
 
             <div class="col-sm-2 toc">
-                <div class="panel panel-default" data-spy="affix">
+                <div class="panel panel-default" data-spy="affix" style="max-height: 95%; overflow-x: hidden; overflow-y: auto;">
                 <div id="main-nav" class="panel-body">
                     <ul class="nav">
                         <li><a href="#intro">Intro</a></li>
-                        <li><a href="#identifiers">Identifiers</a>
-                            <ul>
-                                <li><a href="#methods">Methods</a></li>
-                                <li><a href="#operators">Operators</a></li>
-                                <li><a href="#literal-identifiers">Literal identifiers</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="#methods">Functions</a></li>
+                        <li><a href="#operators">Operators</a></li>
+                        <li><a href="#literal-identifiers">Literals</a></li>
                         <li><a href="#data-types">Data Types</a>
                             <ul>
                                 <li><a href="#none">None</a></li>
@@ -45,6 +41,7 @@
                                 <li><a href="#tuples">Tuples</a></li>
                                 <li><a href="#classes-and-objects">Classes</a></li>
                                 <li><a href="#traits">Traits</a></li>
+                                <li><a href="#implicit-conversion">Implicit</a></li>
                             </ul>
                         </li>
                         <li><a href="#control-flow">Flow</a>
@@ -54,7 +51,20 @@
                                 <li><a href="#pattern-matching">Patterns</a></li>
                             </ul>
                         </li>
-                        <li><a href="#comprehensions">Comprehensions</a></li>
+                        <li><a href="#iterable">Iterable</a>
+                            <ul>
+                                <li><a href="#comprehensions">Comprehensions</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#functional-101">Functional 101</a>
+                            <ul>
+                                <li><a href="#tail-call">Tail calls</a></li>
+                                <li><a href="#trampolines">Trampolines</a></li>
+                                <li><a href="#partial-functions" style="white-space: nowrap">Partial Functions</a></li>
+                                <li><a href="#currying">Currying</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 </div>
@@ -71,14 +81,13 @@
                     Google App Engine and Heroku) and can use other java class libraries seamlessly.
                 </p>
 
-                <h2 id="identifiers">Identifiers</h2>
+                <h2 id="methods">Methods</h2>
                 <p>
-                    Scala is <em>very flexible</em> regarding what it considers a valid identifier. Most characters can
-                    validly be used in identifier names, with the exception of the “parenthetical” characters
-                    <code>( ) [ ] { }</code> and the “delimiter” characters <code>` ’ ' " . ; ,</code>.
+                    Scala is <em>very flexible</em> regarding what it considers a valid identifier (and thus a function
+                    name). Most characters can validly be used in identifier names, with the exception of the
+                    “parenthetical” characters <code>( ) [ ] { }</code> and the “delimiter” characters
+                    <code>` ’ ' " . ; ,</code>.
                 </p>
-
-                <h3 id="methods">Methods</h3>
                 <p>
                     <ol>
                         <li>
@@ -116,7 +125,7 @@
                     greet "Jim"
                 </code-block>
 
-                <h4>Params</h4>
+                <h3 id="params">Params</h3>
                 <p>
                     You can define functions in Scala that accept a variable number of parameters:
                 </p>
@@ -131,7 +140,40 @@
                     }
                 </code-block>
 
-                <h3 id="operators">Operators</h3>
+                <h3 id="implicit-parameters">Implicit Parameters</h3>
+                <p>
+                    Scala let's you specify default values for function parameters in the function definition:
+                </p>
+                <code-block lang="csharp">
+                    void Order(string drink = "beer")
+                    {
+                        Console.WriteLine (string.Format("Gime a {0}", drink));
+                    }
+                </code-block>
+                <code-block lang="scala">
+                    def order(drink: String = "beer") = println("Gime a " + drink)
+
+                    order()
+                    order("Whiskey")
+                </code-block>
+                <p>
+                    An alternative is to specify implicit parameters... which can be specified separately anywhere in
+                    scope:
+                </p>
+                <code-block lang="scala">
+                    def order(implicit drink: String) = { println("Gime a " + drink) }
+
+                    implicit val drink = "beer"
+
+                    order
+                    order("Whiskey")
+                </code-block>
+                <p>
+                    One possible advantage of this technique is that it allows you to specify different defaults
+                    in different contexts (by importing the relevant implicit context declarations).
+                </p>
+
+                <h2 id="operators">Operators</h2>
                 <p>
                     Scala has no operators, these are implemented as functions and take advantage of the fact that all
                     the "operator characters" <code>! # % & * + - / : < = > ? @ \ ^ | ~</code> can be used as (or in)
@@ -164,7 +206,7 @@
                     <code>abc_</code>.
                 </p>
 
-                <h4>Equals, eq and ne</h4>
+                <h3>Equals, eq and ne</h3>
                 <p>
                     <span class="label label-warning">Warning!</span>
                     Unlike C# the <code>==</code> operator in Scala tests for value equality (not reference equality)!
@@ -191,7 +233,7 @@
                     operator.
                 </p>
 
-                <h3 id="literal-identifiers">Literal identifiers</h3>
+                <h2 id="literal-identifiers">Literals</h2>
                 <p>
                     Another oddity of Scala is that it allows identifiers to be surrounded in back-quotes:
                 </p>
@@ -697,6 +739,15 @@ Wonderland is nowhere to be found
                     }
                 </code-block>
 
+                <h3 id="implicit-conversion">Implicit Conversion</h3>
+                <p>
+                    Scala allows implicit conversion between types. Depending on the context, we might write the
+                    equivalent in C# using either the <em>implicit operator</em> or <em>extension methods</em>.
+                </p>
+                <code-block lang="scala">
+                    implicit def stringWrapper(x: String) = new runtime.RichString(x)
+                </code-block>
+
 
                 <h2 id="control-flow">Flow</h2>
                 <h3 id="if-statements">if statements</h3>
@@ -876,9 +927,69 @@ Wonderland is nowhere to be found
                 </p>
 
 
-                <h2 id="comprehensions">Comprehensions</h2>
+                <h2 id="iterable">Iterable</h2>
                 <p>
-                    Comprehensions in Scala are used to achieve what you'd generally achieve with Linq in C#.
+                    The <code>Iterable[+A]</code> trait in Scala does more or less the same thing as
+                    <code>IEnumerable</code> in C#. It provides the foundation for various other functional operations
+                    such as <code>map</code>, <code>filter</code> etc. The following are some functions and language
+                    constructs that work with Iterables.
+                </p>
+                <code-block lang="csharp">
+                    var a = new List&lt;int&gt; { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                    var b = a.Select (x => x * x);
+                    var c = a.Where(x => x % 2 == 0);
+                    var d = a.Skip (2);
+                    var e = a.SkipWhile(x => x < 5);
+                    var f = a.Exists (x => x % 2 == 0);
+                    var g = a.FirstOrDefault (x => x % 3 == 0);
+                    var h = a.FindIndex (x => x % 3 == 0);
+                    var i = a.IndexOf (5);
+                    var j = a.All (x => x > 5);
+                    var k = a.Take(2);
+                    var l = a.TakeWhile(x => x < 5);
+
+                    // More flexible than the Scala partition function
+                    var m = a.GroupBy(x => x % 2 == 0);
+                    var n = a.Aggregate((x, y) => x + y);
+                    var o = a.Aggregate(10, (x, y) => x * y);
+                </code-block>
+                <code-block lang="scala">
+                    val a = List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    val b = a map { x => x * x }
+                    val c = a filter { _ % 2 == 0 }
+                    val d = a drop 2
+                    val e = a dropWhile { _ < 5 }
+                    val f = a exists { _ % 2 == 0 }
+                    val g = a find { _ % 3 == 0 }
+                    val h = a findIndexOf { _ % 3 == 0 }
+                    val i = a indexOf 5
+                    val j = a forall { _ > 5 }
+                    var k = a take 2
+                    var l = a takeWhile { _ < 5 }
+
+
+                    val m = a partition { _ % 2 == 0 }
+                    val n = a reduceLeft(_ + _)
+                    val o = a.foldLeft(10)(_ * _)
+                </code-block>
+                <p>
+                    As noted, the C# <code>GroupBy</code> method is a bit more powerful than Scala's
+                    <code>partition</code> method. There are loads of other methods provided by Linq that
+                    have no equivalent in Scala... although it would be fairly trivial to code these up (and that's
+                    probably already been done by someone so it's just a matter of tracking down the right package).
+                </p>
+                <p>
+                    Conversely, Scala's Iterable includes a (<code>sameElements</code>) method that doesn't have any
+                    equivalent in C# and Scala has <code>foldRight</code> and <code>reduceRight</code> functions. To do
+                    these in C# would be a two step process - we'd need to reverse the order of the elements and then
+                    use the <code>Aggregate</code> method. <span class="label label-info">Note</span> however that
+                    <code>foldRight</code> and <code>reduceRight</code> are not
+                    <a href="#tail-call">tail-call recursive</a>, so maybe avoid using them anyway.
+                </p>
+
+                <h3 id="comprehensions">Comprehensions</h3>
+                <p>
+                    Comprehensions in Scala provide an alternative syntax to achieve some of the same things:
                 </p>
                 <code-block lang="csharp">
                     var a = new List&lt;int&gt; { 1, 2, 3, 4 };
@@ -892,6 +1003,145 @@ Wonderland is nowhere to be found
                     val c = for (x <- a if x % 2 == 0) yield x
                     val d = a map (x => x -> x*x) toMap
                 </code-block>
+
+
+                <h2 id="functional-101">Functional Programming 101</h2>
+                <p>
+                    I have, quite sensibly, forgotten all of the Haskell that I learnt back in 1996... and Scala does
+                    some stuff that Haskell didn't do back then anyway, so here goes.
+                </p>
+
+                <h3 id="tail-call">Tail call optimisation</h3>
+                <p>
+                    Having functional roots, Scala of course supports and encourages functional programming techniques.
+                    So Scala fans might tend to write a recursive function where OOP guys would write a loop. The only
+                    problem with this that deeply recursive functions can cause a stack overflow. For example:
+                </p>
+                <code-block lang="scala">
+                    def factorial(i: BigInt): BigInt = i match {
+                        case _ if i == 1 => i
+                        case _ => i * factorial(i - 1)
+                    }
+                    format("%s factorial is %s\n", i, factorial(10000))
+                </code-block>
+                <p>
+                    On most machines (certainly on mine) this will result in a stack overflow. However the function can
+                    be rewritten so that <em>scalac</em> can optimize to avoid a stack overflow by rewriting it as
+                    a loop:
+                </p>
+                <code-block lang="scala">
+                    def factorial(i: BigInt): BigInt = {
+                        def fact(i: BigInt, accumulator: BigInt): BigInt = i match {
+                            case _ if i == 1 => accumulator
+                            case _ => fact(i - 1, i * accumulator)
+                        }
+                        fact(i, 1)
+                    }
+                </code-block>
+                <p>
+                    In order for <em>scalac</em> to be able to optimize a function in this way, the function must be
+                    <strong>tail recursive</strong> - which is to say that the last operation it performs must be to
+                    call itself (or return a value). The first example of our factorial method is not <em>tail
+                    recursive</em> since in the second case statement it calls itself and <em>then</em> multiplies the
+                    result by <code>i</code>. The second example is tail recursive however since it either spits back
+                    the <code>accumulator</code> value or calls itself with some different arguments (the multiplication
+                    is done prior to the recursive function call)... this kind of function can be optimized by scalac
+                    and thus can be used to calculate truly massive factorials (if you're happy to wait for a while -
+                    it took my machine a minute or so to give me the factorial of one million).
+                </p>
+                <p>
+                    <span class="label label-info">Note</span> The <code>@tailrec</code> annotation can be used to
+                    decorate functions that should be tail recursive and will trigger an error if the compiler can’t
+                    optimise the annotated method.
+                </p>
+
+                <h3 id="trampolines">Trampolines and continuations</h3>
+                <p>
+                    There are some other techniques for optimizing recursive functions that can't be handled directly by
+                    tail call optimization, such as <strong>trampolines</strong> and <strong>continuations</strong> -
+                    <a href="http://blog.richdougherty.com/2009/04/tail-calls-tailrec-and-trampolines.html">this</a> is
+                    a really nice explanation of such.
+                </p>
+
+                <h3 id="partial-functions">Partial Functions</h3>
+                <p>
+                    Partial functions in Scala add another way (to the already dizzying variety) to use underscores in
+                    Scala! You can use <code>Action</code> and <code>Func</code> types in C# to do pretty much the same
+                    thing (albeit more verbosely).
+                </p>
+                <code-block lang="csharp">
+                    Func&lt;string, string, string> ConcatUpper = (s1, s2) => (s1 + " " + s2).ToUpper();
+
+                    Func&lt;string, string, string> c = (x, y) => ConcatUpper (x, y);
+                    Console.WriteLine (c("short", "pants"));
+
+                    Func&lt;string, string> c2 = (x) => ConcatUpper ("short", x);
+                    Console.WriteLine (c2("pants"));
+                </code-block>
+                <code-block lang="scala">
+                    def concatUpper(s1: String, s2: String): String = (s1 + " " + s2).toUpperCase
+
+                    val c = concatUpper _
+                    println(c("short", "pants"))
+
+                    val c2 = concatUpper("short", _: String)
+                    println(c2("pants"))
+                </code-block>
+                <p>
+                    However partial functions can do some tricks that C# Funcs cannot (out of the box). For example,
+                    Scala creates partial functions implicitly in certain cases:
+                </p>
+                <code-block lang="scala">
+                    val a = List("short", "pants")
+                    a.map(println)                  // same as a.map(println _)
+                </code-block>
+                <p>
+                    ...and Scala partial functions are of type <code>PartialFunction</code>, which is a trait that
+                    defines some helpful methods, such as <code>orElse</code> and <code>isDefinedAt</code>:
+                </p>
+                <code-block lang="scala">
+                    val truthier: PartialFunction[Boolean, String] = { case true => "truthful" }
+                    val fallback: PartialFunction[Boolean, String] = { case x => "sketchy" }
+                    val tester = truthier orElse fallback
+
+                    println(tester(1 == 1))
+                    println(tester(2 + 2 == 5))
+                </code-block>
+                <p>
+                    The above code needs a bit of clarification... <code>case</code> statements in Scala get converted
+                    internally into partial functions and the <code>isDefinedAt</code> method is implemented to indicate
+                    whether or not the expression matches one of the case matchers.
+                </p>
+
+                <h3 id="currying">Currying</h3>
+                <p>
+                    Currying transforms a function that takes multiple parameters into a chain of functions, each taking
+                    a single parameter. The following is an example of how to declare and call a curried function:
+                </p>
+                <code-block lang="scala">
+                    def cat(s1: String)(s2: String) = s1 + s2
+                    cat("foo")("bar")
+                </code-block>
+                <p>
+                    This is typically combined with partial functions in order to create specialized versions of generic
+                    functions. For example:
+                </p>
+                <code-block lang="scala">
+                    def multiplier(i: Int)(factor: Int) = i * factor
+                    val byFive = multiplier(5) _
+                    val byTen = multiplier(10) _
+                </code-block>
+                <p>
+                    Doing the same thing in C#, without currying, would of course be possible but would be very
+                    verbose by comparison. Also note that curried functions can be created in Scala using the
+                    <code>curried</code> method:
+                </p>
+                <code-block lang="scala">
+                    def cat(s1: String, s2: String): String = (s1 + " " + s2).toUpperCase
+                    def curry = (cat _).curried
+                    println(curry("short")("pants"))
+                </code-block>
+
 
             </div>
         </div>
