@@ -21,7 +21,7 @@
         <div class="row">
 
             <div class="col-sm-2 toc">
-                <div class="panel panel-default" data-spy="affix" style="max-height: 95%; overflow-x: hidden; overflow-y: auto;">
+                <div class="panel panel-default" data-spy="affix">
                 <div id="main-nav" class="panel-body">
                     <ul class="nav">
                         <li><a href="#intro">Intro</a></li>
@@ -61,8 +61,10 @@
                             <ul>
                                 <li><a href="#tail-call">Tail calls</a></li>
                                 <li><a href="#trampolines">Trampolines</a></li>
-                                <li><a href="#partial-functions" style="white-space: nowrap">Partial Functions</a></li>
+                                <li><a href="#partial-functions">Partial Functions</a></li>
                                 <li><a href="#currying">Currying</a></li>
+                                <li><a href="#by-name-parameters">Call by Name</a></li>
+                                <li><a href="#lazy-vals">Lazy Vals</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -1142,6 +1144,104 @@ Wonderland is nowhere to be found
                     println(curry("short")("pants"))
                 </code-block>
 
+                <h3 id="by-name-parameters">Call by Name</h3>
+                <p>
+                    By default, method parameters get evaluated before being passed into functions and only the
+                    <em>value</em> gets passed into the function. In the case of function parameters however, it's
+                    possible to tell Scala to evaluate the parameters only when they're used. This could be done by
+                    passing an anonymous function as a parameter and then calling this in the body of the higher order
+                    function:
+                </p>
+                <code-block lang="scala">
+                    def whileLame(conditional: () => Boolean)(f: () => Unit) {
+                        if (conditional()) {
+                            f()
+                            whileLame(conditional)(f)
+                        }
+                    }
+                    var count = 0
+                    whileLame(() => count < 5)(() => {
+                        println("just lame")
+                        count += 1
+                    })
+                </code-block>
+                <p>
+                    This is a bit verbose however so Scala has some sugar to make this prettier - it lets you omit the
+                    <code>()</code> when both declaring the functional parameter and when calling it
+                </p>
+                <code-block lang="scala">
+                    def whileAwesome(conditional: => Boolean)(f: => Unit) {
+                        if (conditional) {
+                            f
+                            whileAwesome(conditional)(f)
+                        }
+                    }
+                    var count = 0
+                    whileAwesome(count < 5) {
+                        println("still awesome")
+                        count += 1
+                    }
+                </code-block>
+                <p>
+                    And voila - with a bit of currying we've created our own while loop using plain old functions!
+                </p>
+                <p>
+                    <span class="label label-info">Note</span> that if we were to remove the <code>=></code> between
+                    the <code>conditional:</code> and the <code>Boolean</code> we would be passing by value and the
+                    conditional would not get reevaluated on each loop (so the loop would continue indefinitely).
+                </p>
+
+                <h3 id="lazy-vals">Lazy Vals</h3>
+                <p>
+                    Lazy Vals in Scala are similar to but not quite the same as C# <a href="">Lazy&lt;T&gt;</a> types.
+                    In Scala <code>lazy</code> is a keyword that can preceed the declaration of immutable
+                    <code>val</code> fields and will delay evaluation/initialization of the field until it is first
+                    used. For Example:
+                </p>
+                <code-block lang="scala">
+                    trait AbstractT2 {
+                        println("In AbstractT2:")
+                        val value: Int
+                        lazy val inverse = { println("initializing inverse:"); 1.0/value }
+                        //println("AbstractT2: value = "+value+", inverse = "+inverse)
+                    }
+
+                    val c2d = new AbstractT2 {
+                        println("In c2d:")
+                        val value = 10
+                    }
+
+                    println("Using c2d:")
+                    println("c2d.value = "+c2d.value+", inverse = "+c2d.inverse)
+                </code-block>
+                <p>
+                    The code above outputs:
+                </p>
+                <pre>
+In AbstractT2:
+In c2d:
+Using c2d:
+initializing inverse:
+c2d.value = 10, inverse = 0.1
+                </pre>
+                <p>
+                    <span class="label label-warning">Beware</span> however that if we remove the comments from the
+                    <code>println</code> statement in the body of <code>AbstractT2</code> then inverse would get
+                    initialized during <code>AbstractT2</code> construction... which would yield:
+                </p>
+                <pre>
+In AbstractT2:
+initializing inverse:
+AbstractT2: value = 0, inverse = Infinity
+In c2d:
+Using c2d:
+c2d.value = 10, inverse = Infinity
+                </pre>
+                <p>
+                    <code>lazy val</code> is therefore slightly different to abstract or overriden methods. It's
+                    principle advantage is that the initialization code only gets run once - so they can be a convenient
+                    way to perform expensive initialization operations.
+                </p>
 
             </div>
         </div>

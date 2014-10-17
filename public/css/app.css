@@ -20,8 +20,16 @@ pre code .close:hover {
 #intro {
   margin-top: 0px;
 }
+div[data-spy="affix"] {
+  max-height: 95%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 #main-nav {
   padding: 10px 5px;
+}
+#main-nav a {
+  white-space: nowrap;
 }
 code-block {
   display: inline-block;
@@ -38,13 +46,6 @@ code-block[lang="csharp"] {
   width: 50%;
   width: calc(50% - 10px);
 }
-
-code-block.full {
-    float: none;
-    margin-right: 0;
-    width: 100%;
-}
-
 code-block[lang="csharp"] + code-block[lang="ruby"],
 code-block[lang="csharp"] + code-block[lang="python"],
 code-block[lang="csharp"] + code-block[lang="scala"] {
