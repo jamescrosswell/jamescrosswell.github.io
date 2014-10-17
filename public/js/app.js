@@ -4,6 +4,10 @@
 var app = angular.module('tut',[]);
 
 app.controller('IndexCtrl', function($scope){
+
+    // Set default section in TOC
+    $scope.section = 'Basics';
+
 });
 
 app.directive('codeBlock', function(){
