@@ -359,16 +359,30 @@ Wonderland is nowhere to be found
                 var languages: List[String] = List()
             </code-block>
             <p>
-                Scala also has some curious ways to declare abstract generic types that have no parallel in C#. In
-                the Scala docs you'll note that the List class is declared as <code>class List[+A]</code>. The
-                <code>+</code> bit indicates that <code>List[B]</code> is a <em>subtype</em> of <code>List[A]</code>
-                for any <code>B</code> that is a subtype of <code>A</code>.
+                Scala also lets you explicitly declare covariance and contravariance for parameterized types.
+                <code>class List[+A]</code> indicates that <code>List[DerivedObject]</code> is a <em>subtype</em> of
+                <code>List[BaseObject]</code> (i.e. List is <strong>covariant</strong> on the type parameter A). This is
+                the most intuitive form of variance.
             </p>
             <p>
-                If there is a <code>-</code> in front of a type parameter, then the relationship goes the other way;
-                <code>Foo[B]</code> would be a <em>supertype</em> of <code>Foo[A]</code>, if the declaration was
-                <code>Foo[-A]</code>. I can't imagine when you would need such an unusual construct.
+                <code>Foo[-A]</code> indicates that <code>Foo[BaseObject]</code> is a <em>subtype</em> of
+                <code>Foo[DerivedType]</code> (i.e. Foo is <strong>contravariant</strong> on the type parameter A). This
+                is often used for function parameters.
             </p>
+            <p>
+                For example, imagine a parameterized method that takes a function as a parameter that can do something
+                with DerivedObject... Any function that can do something with BaseObject can, of course, also do
+                something with DerivedObject, so it's totally valid to consider SomeFunction[BaseObject] a subtype of
+                SomeFunction[DerivedType] in this case.
+            </p>
+            <code-block lang="csharp">
+                interface ICovariant&lt;out R&gt; {}
+                interface IContravariant&lt;in A&gt;
+            </code-block>
+            <code-block lang="scala">
+                trait Covariant[+R]
+                trait Contravariant[-A]
+            </code-block>
 
             <h3 id="abstract-types">Abstract Types</h3>
             <p>
